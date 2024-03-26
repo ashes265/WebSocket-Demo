@@ -1,4 +1,4 @@
-package ashes.websocket.model;
+package ashes.websocket.model.request;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class Message {
+public class MessageReq {
     String sender;
     String content;
 }

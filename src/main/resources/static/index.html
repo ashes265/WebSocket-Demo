@@ -15,8 +15,8 @@
 </div>
 
 <div>
-    <label for="message">Message:</label>
-    <input type="text" id="message">
+    <label for="messageReq">Message:</label>
+    <input type="text" id="messageReq">
     <button id="sendBtn">Send</button>
 </div>
 
@@ -24,7 +24,7 @@
 
 <script>
         var usernameInput = document.getElementById("username");
-        var messageInput = document.getElementById("message");
+        var messageInput = document.getElementById("messageReq");
         var sendBtn = document.getElementById("sendBtn");
         var chatArea = document.getElementById("chatArea");
 
@@ -36,8 +36,8 @@
             console.log('haha');
             stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/messages', function (message) {
-                    showMessage(JSON.parse(message.body));
+                stompClient.subscribe('/topic/messages', function (messageReq) {
+                    showMessage(JSON.parse(messageReq.body));
                 });
             });
         }
@@ -51,12 +51,12 @@
 
         function sendMessage() {
             var username = usernameInput.value.trim();
-            var message = messageInput.value.trim();
+            var messageReq = messageInput.value.trim();
 
-            if (username && message) {
+            if (username && messageReq) {
                 var chatMessage = {
                     sender: username,
-                    content: message
+                    content: messageReq
                 };
 
                 stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
@@ -65,8 +65,8 @@
             }
         }
 
-        function showMessage(message) {
-            var chatMessage = "[" + message.sender + "]: " + message.content;
+        function showMessage(messageReq) {
+            var chatMessage = "[" + messageReq.sender + "]: " + messageReq.content;
             var chatMessageElement = document.createElement("div");
             chatMessageElement.innerText = chatMessage;
             chatArea.appendChild(chatMessageElement);

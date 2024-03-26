@@ -1,6 +1,6 @@
 package ashes.websocket.config;
 
-import ashes.websocket.model.Message;
+import ashes.websocket.model.request.MessageReq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -24,7 +24,7 @@ public class WebSocketEventListener {
         String username = (String) Objects.requireNonNull(headerAccessor.getSessionAttributes()).get("username");
         if (username != null) {
             log.info("user disconnected: {}", username);
-            messagingTemplate.convertAndSend("/topic/messages", Message.builder().sender(username).content("LEAVE").build());
+            messagingTemplate.convertAndSend("/topic/messages", MessageReq.builder().sender(username).content("LEAVE").build());
         }
     }
 }
