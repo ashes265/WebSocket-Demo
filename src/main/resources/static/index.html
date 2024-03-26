@@ -33,11 +33,14 @@
         function connect() {
             var socket = new SockJS('/chat');
             stompClient = Stomp.over(socket);
-            console.log('haha');
             stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
                 stompClient.subscribe('/topic/messages', function (messageReq) {
                     showMessage(JSON.parse(messageReq.body));
+                });
+                stompClient.subscribe('/user/texting', function(message) {
+                    const receivedMessage = JSON.parse(message.body);
+                    console.log('Nhận tin nhắn mới:', receivedMessage);
                 });
             });
         }
@@ -71,6 +74,7 @@
             chatMessageElement.innerText = chatMessage;
             chatArea.appendChild(chatMessageElement);
         }
+
 
         sendBtn.addEventListener("click", sendMessage);
 

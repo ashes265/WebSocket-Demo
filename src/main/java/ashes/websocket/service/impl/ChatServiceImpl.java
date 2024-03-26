@@ -31,7 +31,7 @@ public class ChatServiceImpl implements ChatService {
             entity.setSenderId(req.getSender());
             entity.setReceiverId(req.getReceiver());
             repo.save(entity);
-            messagingTemplate.convertAndSendToUser(req.getReceiver(), "/chat/texting", entity);
+            messagingTemplate.convertAndSendToUser(req.getReceiver(), "/texting", entity);
             log.info("Add chat successfully");
         } catch (Exception ex) {
             log.error(ex.getMessage());
