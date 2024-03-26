@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h1>Chat</h1>
+
+<div>
+    <label for="username">Username:</label>
+    <input type="text" id="username">
+</div>
+
+<div>
+    <label for="message">Message:</label>
+    <input type="text" id="message">
+    <button id="sendBtn">Send</button>
+</div>
+
+<div id="chatArea"></div>
+
+<script>
+        var usernameInput = document.getElementById("username");
+        var messageInput = document.getElementById("message");
+        var sendBtn = document.getElementById("sendBtn");
+        var chatArea = document.getElementById("chatArea");
+
+        var stompClient = null;
+
+        function connect() {
+            var socket = new SockJS('/chat');
+            stompClient = Stomp.over(socket);
+            console.log('haha');
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/messages', function (message) {
+                    showMessage(JSON.parse(message.body));
+                });
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            var username = usernameInput.value.trim();
+            var message = messageInput.value.trim();
+
+            if (username && message) {
+                var chatMessage = {
+                    sender: username,
+                    content: message
+                };
+
+                stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
+
+                messageInput.value = "";
+            }
+        }
+
+        function showMessage(message) {
+            var chatMessage = "[" + message.sender + "]: " + message.content;
+            var chatMessageElement = document.createElement("div");
+            chatMessageElement.innerText = chatMessage;
+            chatArea.appendChild(chatMessageElement);
+        }
+
+        sendBtn.addEventListener("click", sendMessage);
+
+        connect();
+    </script>
+</body>
+</html>
