@@ -5,7 +5,6 @@ import ashes.websocket.model.request.ChatReq;
 import ashes.websocket.model.response.ChatResponse;
 import ashes.websocket.repository.ChatRepo;
 import ashes.websocket.service.ChatService;
-import ashes.websocket.utils.TransformUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -31,8 +30,12 @@ public class ChatServiceImpl implements ChatService {
             entity.setSenderId(req.getSender());
             entity.setReceiverId(req.getReceiver());
             repo.save(entity);
-            messagingTemplate.convertAndSendToUser(req.getReceiver(), "/texting", entity);
-            log.info("Add chat successfully");
+            //Send to client with socket url: /user/{receiver}/texting
+//            messagingTemplate.convertAndSendToUser(req.getReceiver(), "/texting", entity);
+
+            //Send noti to client with socket url: /user/{receiver}/notify
+            messagingTemplate.convertAndSendToUser(req.getReceiver(), "/notify/texting", "You received a new message from " + req.getSender() + "!!");
+            log.info("Send message successfully!!");
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
